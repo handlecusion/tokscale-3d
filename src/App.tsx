@@ -201,7 +201,7 @@ export default function App() {
               <button className="settings-close" onClick={() => setAboutOpen(false)}>×</button>
             </div>
             <div style={{ fontSize: 13, lineHeight: 1.6, color: '#d1d5db' }}>
-              <div><strong>Tokscale 3D</strong> — version 0.1.0</div>
+              <div><strong>Tokscale 3D</strong> — version 0.1.1</div>
               <div style={{ marginTop: 8 }}>
                 Native macOS menubar dashboard for the <code>tokscale</code> CLI.
               </div>
@@ -222,4 +222,3 @@ export default function App() {
     </div>
   )
 }
-

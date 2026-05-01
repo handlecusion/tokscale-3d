@@ -39,8 +39,8 @@ tokscale graph --no-spinner
 
 ## Release
 
-Releases are managed with Git tags. Version `0.1.0` is published as tag
-`v0.1.0`, with the macOS DMG attached to the GitHub release.
+Releases are managed with Git tags. Version `0.1.1` is published as tag
+`v0.1.1`, with the macOS DMG attached to the GitHub release.
 
 ## Thanks
 

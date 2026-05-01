@@ -1,6 +1,6 @@
 cask "tokscale" do
-  version "0.1.0"
-  sha256 "148f2f415a7a8efa07e5d6bbbe2ac03060319e3a2afb1d051f2ca72fee2becae"
+  version "0.1.1"
+  sha256 "e7b5f709e1f4323848a84601d0404c5ab5b311b478b4976156d055801ca65dd6"
 
   url "https://github.com/handlecusion/tokscale-3d/releases/download/v#{version}/Tokscale_#{version}_aarch64.dmg"
   name "Tokscale"
@@ -11,6 +11,11 @@ cask "tokscale" do
   depends_on formula: "tokscale"
 
   app "Tokscale.app"
+
+  postflight do
+    system_command "/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister",
+                   args: ["-f", "#{appdir}/Tokscale.app"]
+  end
 
   zap trash: [
     "~/Library/Application Support/com.handlecusion.tokscale3d",
