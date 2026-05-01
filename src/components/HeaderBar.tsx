@@ -16,14 +16,17 @@ interface Props {
 export function HeaderBar({ totalTokens, year, years, onYearChange, theme, onThemeChange, view, onViewChange, onOpenSettings }: Props) {
   return (
     <div className="header-bar">
-      <div className="header-title">
-        <span className="header-num">{humanizeTokens(totalTokens)}</span>
-        <span className="header-text"> tokens used in </span>
-        <select className="year-select" value={year} onChange={e => onYearChange(e.target.value)}>
-          {years.map(y => (
-            <option key={y} value={y}>{y}</option>
-          ))}
-        </select>
+      <div className="header-brand">
+        <img className="brand-logo" src="/tokscale-logo.png" alt="" aria-hidden="true" />
+        <div className="header-title">
+          <span className="header-num">{humanizeTokens(totalTokens)}</span>
+          <span className="header-text"> tokens used in </span>
+          <select className="year-select" value={year} onChange={e => onYearChange(e.target.value)}>
+            {years.map(y => (
+              <option key={y} value={y}>{y}</option>
+            ))}
+          </select>
+        </div>
       </div>
       <div className="header-controls">
         <select className="theme-select" value={theme} onChange={e => onThemeChange(e.target.value)}>

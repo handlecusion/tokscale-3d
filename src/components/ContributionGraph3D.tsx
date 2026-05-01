@@ -13,12 +13,18 @@ interface Props {
 const CELL = 1
 const GAP = 0.15
 const STEP = CELL + GAP
-const BASE_HEIGHT = 0.05
+const BASE_HEIGHT = 0.35
 const MAX_HEIGHT = 4.0
 
+// Per-face shading: top is lighter than sides for a stylized 3D tile look.
+const COLOR_INACTIVE_TOP = new THREE.Color('#ffffff')
+const COLOR_INACTIVE_SIDE = new THREE.Color('#a8b0bd')
 const COLOR_ACTIVE_LIGHT = new THREE.Color('#bfdbfe')
 const COLOR_ACTIVE_DARK = new THREE.Color('#1e3a8a')
-const COLOR_INACTIVE = new THREE.Color('#e5e7eb')
+
+function darken(c: THREE.Color, factor: number): THREE.Color {
+  return new THREE.Color(c.r * factor, c.g * factor, c.b * factor)
+}
 
 interface HoverInfo {
   date: string
@@ -68,15 +74,17 @@ export function ContributionGraph3D({ grid }: Props) {
       const z = offsetZ + c.row * STEP + STEP / 2
       let height = BASE_HEIGHT
       let isActive = false
-      let color = COLOR_INACTIVE
+      let topColor = COLOR_INACTIVE_TOP
+      let sideColor = COLOR_INACTIVE_SIDE
       if (c.active) {
         const norm = Math.pow(c.tokens / max, 0.6)
         height = BASE_HEIGHT + norm * MAX_HEIGHT
         isActive = true
         const t = Math.min(1, Math.max(0, Math.pow(c.tokens / max, 0.5)))
-        color = new THREE.Color().lerpColors(COLOR_ACTIVE_LIGHT, COLOR_ACTIVE_DARK, t)
+        topColor = new THREE.Color().lerpColors(COLOR_ACTIVE_LIGHT, COLOR_ACTIVE_DARK, t)
+        sideColor = darken(topColor, 0.78)
       }
-      return { c, i, x, z, height, isActive, color }
+      return { c, i, x, z, height, isActive, topColor, sideColor }
     })
   }, [grid, max, offsetX, offsetZ])
 
@@ -218,7 +226,7 @@ export function ContributionGraph3D({ grid }: Props) {
 
         {cells.map(item => {
           if (!item) return null
-          const { c, x, z, height, isActive, color } = item
+          const { c, x, z, height, isActive, topColor, sideColor } = item
           return (
             <mesh
               key={c.date}
@@ -241,7 +249,13 @@ export function ContributionGraph3D({ grid }: Props) {
               }}
             >
               <boxGeometry args={[CELL, height, CELL]} />
-              <meshStandardMaterial color={color} roughness={0.55} metalness={0.05} />
+              {/* face order: +X, -X, +Y(top), -Y(bottom), +Z, -Z */}
+              <meshStandardMaterial attach="material-0" color={sideColor} roughness={0.6} metalness={0.04} />
+              <meshStandardMaterial attach="material-1" color={sideColor} roughness={0.6} metalness={0.04} />
+              <meshStandardMaterial attach="material-2" color={topColor} roughness={0.5} metalness={0.04} />
+              <meshStandardMaterial attach="material-3" color={sideColor} roughness={0.6} metalness={0.04} />
+              <meshStandardMaterial attach="material-4" color={sideColor} roughness={0.6} metalness={0.04} />
+              <meshStandardMaterial attach="material-5" color={sideColor} roughness={0.6} metalness={0.04} />
             </mesh>
           )
         })}

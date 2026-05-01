@@ -13,7 +13,8 @@
     "preview": "vite preview --port 4061",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
-    "tauri:build": "tauri build"
+    "tauri:build": "tauri build",
+    "install:local": "tauri build && pkill -f '/Applications/Tokscale.app/Contents/MacOS' || true && rm -rf /Applications/Tokscale.app && cp -R src-tauri/target/release/bundle/macos/Tokscale.app /Applications/ && open /Applications/Tokscale.app"
   },
   "dependencies": {
     "@react-three/drei": "^9.117.3",

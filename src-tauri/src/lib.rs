@@ -45,6 +45,26 @@ async fn get_graph(
 }
 
 #[tauri::command]
+async fn refresh_graph(
+    year: String,
+    state: tauri::State<'_, Arc<AppState>>,
+    app: tauri::AppHandle,
+) -> Result<GraphPayload, String> {
+    let year_clone = year.clone();
+    let data = async_runtime::spawn_blocking(move || tokscale::run(&year_clone))
+        .await
+        .map_err(|e| format!("join: {}", e))??;
+    let entry = state.put(year.clone(), data);
+    let payload = GraphPayload {
+        year: year.clone(),
+        fetched_at: entry.fetched_at,
+        payload: entry.data,
+    };
+    let _ = app.emit("graph-update", &payload);
+    Ok(payload)
+}
+
+#[tauri::command]
 fn quit_app(app: tauri::AppHandle) {
     app.exit(0);
 }
@@ -91,6 +111,7 @@ pub fn run() {
         .manage(state.clone())
         .invoke_handler(tauri::generate_handler![
             get_graph,
+            refresh_graph,
             quit_app,
             tray::update_tray_title
         ]);

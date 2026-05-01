@@ -29,10 +29,41 @@ export default function App() {
   const [settingsOpen, setSettingsOpen] = useState(false)
 
   const [knownClients, setKnownClients] = useState<Set<string>>(new Set())
+  const [aboutOpen, setAboutOpen] = useState(false)
+  const [refreshTick, setRefreshTick] = useState(0)
 
   useEffect(() => {
     saveSettings(settings)
   }, [settings])
+
+  useEffect(() => {
+    if (!isTauri()) return
+    let unlisten: (() => void) | null = null
+    ;(async () => {
+      const { listen } = await import('@tauri-apps/api/event')
+      unlisten = await listen<string>('tray-action', e => {
+        const action = e.payload
+        if (action === 'open-settings') setSettingsOpen(true)
+        else if (action === 'open-about') setAboutOpen(true)
+        else if (action === 'refresh') setRefreshTick(t => t + 1)
+      })
+    })()
+    return () => {
+      if (unlisten) unlisten()
+    }
+  }, [])
+
+  // Manual refresh from tray menu — bypasses cache.
+  useEffect(() => {
+    if (refreshTick === 0) return
+    if (!isTauri()) return
+    ;(async () => {
+      try {
+        const { invoke } = await import('@tauri-apps/api/core')
+        await invoke('refresh_graph', { year })
+      } catch {}
+    })()
+  }, [refreshTick, year])
 
   // Initialize / reconcile selected clients when payload arrives.
   useEffect(() => {
@@ -139,19 +170,19 @@ export default function App() {
                     <ContributionGraph2D grid={grid} />
                   )}
                 </div>
-                <div className="card-side">
-                  <TokenUsageCard stats={stats} />
+                {view === '3D' && (
+                  <div className="overlay-tr">
+                    <TokenUsageCard stats={stats} />
+                    <div className="overlay-avg">
+                      Average: <span className="overlay-avg-num">{formatCost(stats.averagePerDay)}</span> / day
+                    </div>
+                  </div>
+                )}
+                <div className="overlay-bl">
+                  <StreaksCard longest={stats.streaks.longest} current={stats.streaks.current} />
                 </div>
               </div>
             </InnerCard>
-            <div className="below-card">
-              <div className="below-left">
-                <StreaksCard longest={stats.streaks.longest} current={stats.streaks.current} />
-              </div>
-              <div className="below-right">
-                Average: {formatCost(stats.averagePerDay)} / day
-              </div>
-            </div>
           </>
         )}
       </Panel>
@@ -161,6 +192,33 @@ export default function App() {
         settings={settings}
         onChange={setSettings}
       />
+      {aboutOpen && (
+        <>
+          <div className="settings-overlay" onClick={() => setAboutOpen(false)} />
+          <div className="settings-panel" role="dialog">
+            <div className="settings-head">
+              <strong>About Tokscale</strong>
+              <button className="settings-close" onClick={() => setAboutOpen(false)}>×</button>
+            </div>
+            <div style={{ fontSize: 13, lineHeight: 1.6, color: '#d1d5db' }}>
+              <div><strong>Tokscale 3D</strong> — version 0.1.0</div>
+              <div style={{ marginTop: 8 }}>
+                Native macOS menubar dashboard for the <code>tokscale</code> CLI.
+              </div>
+              <div style={{ marginTop: 8 }}>
+                <a
+                  href="https://github.com/handlecusion/tokscale-3d"
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ color: '#60a5fa' }}
+                >
+                  github.com/handlecusion/tokscale-3d
+                </a>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }

@@ -1,22 +1,31 @@
 use crate::GraphPayload;
 use tauri::{
-    menu::{Menu, MenuItem},
+    menu::{Menu, MenuItem, PredefinedMenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
-    AppHandle, LogicalPosition, Manager, PhysicalPosition, PhysicalSize, Runtime, WebviewWindow,
+    AppHandle, Emitter, LogicalPosition, Manager, PhysicalPosition, PhysicalSize, Runtime,
+    WebviewWindow,
 };
 
 const POPOVER_W: f64 = 940.0;
 const POPOVER_H: f64 = 600.0;
 
 pub fn setup<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<()> {
+    let show = MenuItem::with_id(app, "show", "Open Tokscale", true, None::<&str>)?;
+    let settings = MenuItem::with_id(app, "settings", "Settings…", true, Some("Cmd+,"))?;
+    let refresh = MenuItem::with_id(app, "refresh", "Refresh Now", true, Some("Cmd+R"))?;
+    let sep1 = PredefinedMenuItem::separator(app)?;
+    let about = MenuItem::with_id(app, "about", "About Tokscale", true, None::<&str>)?;
+    let sep2 = PredefinedMenuItem::separator(app)?;
     let quit = MenuItem::with_id(app, "quit", "Quit Tokscale", true, Some("Cmd+Q"))?;
-    let show = MenuItem::with_id(app, "show", "Show", true, None::<&str>)?;
-    let menu = Menu::with_items(app, &[&show, &quit])?;
+    let menu = Menu::with_items(
+        app,
+        &[&show, &settings, &refresh, &sep1, &about, &sep2, &quit],
+    )?;
 
     TrayIconBuilder::with_id("main-tray")
-        .icon(app.default_window_icon().cloned().unwrap())
+        .icon(tauri::include_image!("icons/tray-icon.png"))
         .icon_as_template(true)
-        .title("…")
+        .title(" …")
         .menu(&menu)
         .show_menu_on_left_click(false)
         .on_menu_event(|app, event| match event.id.as_ref() {
@@ -24,13 +33,18 @@ pub fn setup<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<()> {
                 app.exit(0);
             }
             "show" => {
-                if let Some(w) = app.get_webview_window("main") {
-                    if let Some(tray) = app.tray_by_id("main-tray") {
-                        let _ = position_window_under_tray(&tray, &w);
-                    }
-                    let _ = w.show();
-                    let _ = w.set_focus();
-                }
+                show_popover(app);
+            }
+            "settings" => {
+                show_popover(app);
+                let _ = app.emit("tray-action", "open-settings");
+            }
+            "refresh" => {
+                let _ = app.emit("tray-action", "refresh");
+            }
+            "about" => {
+                show_popover(app);
+                let _ = app.emit("tray-action", "open-about");
             }
             _ => {}
         })
@@ -56,6 +70,16 @@ pub fn setup<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<()> {
         })
         .build(app)?;
     Ok(())
+}
+
+fn show_popover<R: Runtime>(app: &AppHandle<R>) {
+    if let Some(w) = app.get_webview_window("main") {
+        if let Some(tray) = app.tray_by_id("main-tray") {
+            let _ = position_window_under_tray(&tray, &w);
+        }
+        let _ = w.show();
+        let _ = w.set_focus();
+    }
 }
 
 fn position_window_under_tray<R: Runtime>(
@@ -115,7 +139,12 @@ pub fn refresh_tray_title<R: Runtime>(
 #[tauri::command]
 pub fn update_tray_title(app: AppHandle, title: String) -> Result<(), String> {
     if let Some(tray) = app.tray_by_id("main-tray") {
-        tray.set_title(Some(title)).map_err(|e| e.to_string())?;
+        let title = if title.is_empty() {
+            None
+        } else {
+            Some(format!(" {}", title))
+        };
+        tray.set_title(title).map_err(|e| e.to_string())?;
     }
     Ok(())
 }
