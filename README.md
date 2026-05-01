@@ -44,6 +44,6 @@ Releases are managed with Git tags. Version `0.1.0` is published as tag
 
 ## Thanks
 
-Tokscale is built on top of the `tokscale` CLI. Thanks to the `tokscale`
-developers for creating and maintaining the CLI that makes this menubar
-dashboard possible.
+Tokscale is built on top of the `tokscale` CLI. Special thanks to
+[@junhoyeo](https://github.com/junhoyeo) for creating and maintaining
+`tokscale`, the CLI that makes this menubar dashboard possible.
