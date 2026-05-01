@@ -298,3 +298,92 @@ html, body, #root {
 }
 .tt-date { font-weight: 600; margin-bottom: 2px; }
 .tt-line { color: #d1d5db; }
+
+/* Settings button + panel */
+.settings-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #e5e7eb;
+  border-radius: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.settings-btn:hover { background: rgba(255,255,255,0.06); }
+
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 100;
+}
+.settings-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(420px, 92vw);
+  background: #1f2937;
+  color: #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.08);
+  z-index: 101;
+  padding: 18px 20px 20px;
+}
+.settings-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-size: 15px;
+}
+.settings-close {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+}
+.settings-close:hover { color: #fff; }
+.settings-section { margin-bottom: 18px; }
+.settings-label {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+  margin-bottom: 8px;
+}
+.settings-radio-list { display: grid; gap: 8px; }
+.settings-radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.settings-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.settings-quit {
+  width: 100%;
+  padding: 8px 10px;
+  background: rgba(239,68,68,0.12);
+  color: #fca5a5;
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.settings-quit:hover { background: rgba(239,68,68,0.2); }

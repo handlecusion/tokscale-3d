@@ -7,17 +7,26 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "dev:vite": "node server.js",
+    "build": "vite build",
+    "preview": "vite preview --port 4061",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build"
   },
   "dependencies": {
+    "@react-three/drei": "^9.117.3",
+    "@react-three/fiber": "^8.17.10",
+    "@tauri-apps/api": "^2.11.0",
+    "@tauri-apps/plugin-autostart": "^2.5.1",
     "express": "^4.21.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "three": "^0.171.0",
-    "@react-three/fiber": "^8.17.10",
-    "@react-three/drei": "^9.117.3"
+    "three": "^0.171.0"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.11.0",
     "@types/express": "^4.17.21",
     "@types/node": "^22.9.3",
     "@types/react": "^18.3.12",

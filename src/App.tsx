@@ -7,10 +7,13 @@ import { TokenUsageCard } from './components/TokenUsageCard'
 import { StreaksCard } from './components/StreaksCard'
 import { ContributionGraph2D } from './components/ContributionGraph2D'
 import { ContributionGraph3D } from './components/ContributionGraph3D'
+import { SettingsPanel } from './components/SettingsPanel'
 import { useGraphStream } from './hooks/useGraphStream'
 import { computeStats } from './lib/stats'
 import { buildGrid } from './lib/grid'
 import { formatCost } from './lib/format'
+import { isTauri } from './lib/runtime'
+import { computeTrayTitle, loadSettings, saveSettings, Settings } from './lib/settings'
 
 function defaultYear(): string {
   return String(new Date().getFullYear())
@@ -22,8 +25,14 @@ export default function App() {
   const [theme, setTheme] = useState<string>('Blue')
   const [view, setView] = useState<'2D' | '3D'>('3D')
   const [selected, setSelected] = useState<Set<string> | null>(null)
+  const [settings, setSettings] = useState<Settings>(() => loadSettings())
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   const [knownClients, setKnownClients] = useState<Set<string>>(new Set())
+
+  useEffect(() => {
+    saveSettings(settings)
+  }, [settings])
 
   // Initialize / reconcile selected clients when payload arrives.
   useEffect(() => {
@@ -88,6 +97,20 @@ export default function App() {
     })
   }
 
+  // Push tray title whenever stats or trayMode changes (Tauri only).
+  useEffect(() => {
+    if (!isTauri()) return
+    const title = computeTrayTitle(settings.trayMode, stats)
+    ;(async () => {
+      try {
+        const { invoke } = await import('@tauri-apps/api/core')
+        await invoke('update_tray_title', { title })
+      } catch (e) {
+        // ignore
+      }
+    })()
+  }, [stats, settings.trayMode])
+
   return (
     <div className="page">
       <Panel>
@@ -104,6 +127,7 @@ export default function App() {
               onThemeChange={setTheme}
               view={view}
               onViewChange={setView}
+              onOpenSettings={() => setSettingsOpen(true)}
             />
             <FilterChips presentClients={presentClients} selected={selected} onToggle={toggleClient} />
             <InnerCard>
@@ -131,6 +155,12 @@ export default function App() {
           </>
         )}
       </Panel>
+      <SettingsPanel
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        settings={settings}
+        onChange={setSettings}
+      />
     </div>
   )
 }

@@ -5,3 +5,10 @@ dist
 .env
 .env.*
 .vite
+
+# Tauri
+src-tauri/target
+src-tauri/gen
+
+# Tooling caches
+.playwright-mcp
