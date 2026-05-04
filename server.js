@@ -1,7 +1,9 @@
 import express from 'express'
 import { createServer as createViteServer } from 'vite'
 import { spawn } from 'node:child_process'
+import fs from 'node:fs'
 import http from 'node:http'
+import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -9,7 +11,21 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PORT = 4061
 const REFRESH_MS = 3 * 60 * 1000
 const ONESHOT_MAX_AGE_MS = 30 * 1000
-const TOKSCALE_BIN = '/opt/homebrew/bin/tokscale'
+
+const TOKSCALE_SEARCH_PATHS = [
+  '/opt/homebrew/bin/tokscale',
+  '/usr/local/bin/tokscale',
+  path.join(os.homedir(), '.cargo/bin/tokscale'),
+]
+const NOT_FOUND_HINT =
+  'tokscale CLI not found. Install with: brew install junhoyeo/tokscale/tokscale'
+
+function locateTokscale() {
+  for (const p of TOKSCALE_SEARCH_PATHS) {
+    try { if (fs.existsSync(p)) return p } catch {}
+  }
+  return 'tokscale'
+}
 
 function spawnAndCollect(bin, args) {
   return new Promise((resolve, reject) => {
@@ -38,13 +54,33 @@ function spawnAndCollect(bin, args) {
 async function runTokscale(year) {
   const args = ['graph', '--no-spinner']
   if (year) args.push('--year', String(year))
+  const bin = locateTokscale()
   try {
-    return await spawnAndCollect(TOKSCALE_BIN, args)
+    return await spawnAndCollect(bin, args)
   } catch (e) {
-    if (e && (e.code === 'ENOENT' || /ENOENT/.test(String(e.message)))) {
-      return await spawnAndCollect('tokscale', args)
+    const msg = String(e?.message || e)
+    if (e?.code === 'ENOENT' || /ENOENT/.test(msg)) {
+      throw new Error(NOT_FOUND_HINT)
     }
     throw e
+  }
+}
+
+async function tokscaleVersion() {
+  const bin = locateTokscale()
+  try {
+    const out = await new Promise((resolve, reject) => {
+      const proc = spawn(bin, ['--version'])
+      let stdout = ''
+      proc.stdout?.on('data', d => { stdout += d.toString() })
+      proc.on('error', reject)
+      proc.on('close', () => resolve(stdout))
+    })
+    const token = out.trim().split(/\s+/).pop() || ''
+    const m = /^(\d+)\.(\d+)\.(\d+)/.exec(token)
+    return m ? `${m[1]}.${m[2]}.${m[3]}` : null
+  } catch {
+    return null
   }
 }
 

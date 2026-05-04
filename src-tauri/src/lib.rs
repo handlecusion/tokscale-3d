@@ -71,6 +71,11 @@ fn quit_app(app: tauri::AppHandle) {
 }
 
 #[tauri::command]
+fn get_tokscale_info() -> tokscale::TokscaleInfo {
+    tokscale::info()
+}
+
+#[tauri::command]
 fn set_animate_tray(enabled: bool, state: tauri::State<'_, Arc<AppState>>) {
     state.set_animate_enabled(enabled);
 }
@@ -131,6 +136,7 @@ pub fn run() {
             get_graph,
             refresh_graph,
             quit_app,
+            get_tokscale_info,
             set_animate_tray,
             set_animation_style,
             tray::update_tray_title
