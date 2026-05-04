@@ -15,6 +15,9 @@
     "core:event:default",
     "core:tray:default",
     "core:app:allow-version",
-    "autostart:default"
+    "autostart:default",
+    "updater:default",
+    "dialog:default",
+    "process:default"
   ]
 }

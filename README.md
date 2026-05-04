@@ -1,18 +1,18 @@
-# Tokscale
+# Tokcat
 
 Native macOS menubar dashboard for `tokscale` CLI token usage.
 
 ## Install
 
-The recommended install path is Homebrew. It installs both the Tokscale menubar
+The recommended install path is Homebrew. It installs both the Tokcat menubar
 app and the required `tokscale` CLI.
 
 ```sh
-brew tap handlecusion/tokscale
-brew install --cask tokscale
+brew tap handlecusion/tokcat
+brew install --cask tokcat
 ```
 
-The Homebrew cask installs the Tokscale macOS app and depends on the `tokscale`
+The Homebrew cask installs the Tokcat macOS app and depends on the `tokscale`
 formula from the same tap, so the CLI is installed automatically.
 
 Direct DMG installation only installs the app. Use Homebrew for the full app +
@@ -20,7 +20,7 @@ CLI setup.
 
 ## Usage
 
-After installation, open Tokscale from Applications. Tokscale runs as a macOS
+After installation, open Tokcat from Applications. Tokcat runs as a macOS
 menubar app, so it appears in the menu bar instead of the Dock.
 
 Click the menu bar item to open the dashboard. The app shows token usage from
@@ -39,11 +39,12 @@ tokscale graph --no-spinner
 
 ## Release
 
-Releases are managed with Git tags. Version `0.1.1` is published as tag
-`v0.1.1`, with the macOS DMG attached to the GitHub release.
+Releases are managed with Git tags. Each release includes a signed
+`Tokcat.app.tar.gz` and a `latest.json` manifest used by the in-app updater.
+See `scripts/release.sh` for the build/sign/publish flow.
 
 ## Thanks
 
-Tokscale is built on top of the `tokscale` CLI. Special thanks to
+Tokcat is built on top of the `tokscale` CLI. Special thanks to
 [@junhoyeo](https://github.com/junhoyeo) for creating and maintaining
 `tokscale`, the CLI that makes this menubar dashboard possible.

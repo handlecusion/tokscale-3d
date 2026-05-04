@@ -17,7 +17,7 @@ export function HeaderBar({ totalTokens, year, years, onYearChange, theme, onThe
   return (
     <div className="header-bar">
       <div className="header-brand">
-        <img className="brand-logo" src="/tokscale-logo.png" alt="" aria-hidden="true" />
+        <img className="brand-logo" src="/tokcat-logo.png" alt="" aria-hidden="true" />
         <div className="header-title">
           <span className="header-num">{humanizeTokens(totalTokens)}</span>
           <span className="header-text"> tokens used in </span>

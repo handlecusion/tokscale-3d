@@ -14,6 +14,7 @@ import { buildGrid } from './lib/grid'
 import { formatCost } from './lib/format'
 import { isTauri } from './lib/runtime'
 import { computeTrayTitle, loadSettings, saveSettings, Settings } from './lib/settings'
+import { checkForUpdatesSilent, checkForUpdatesInteractive } from './lib/updater'
 
 function defaultYear(): string {
   return String(new Date().getFullYear())
@@ -46,11 +47,18 @@ export default function App() {
         if (action === 'open-settings') setSettingsOpen(true)
         else if (action === 'open-about') setAboutOpen(true)
         else if (action === 'refresh') setRefreshTick(t => t + 1)
+        else if (action === 'check-update') void checkForUpdatesInteractive()
       })
     })()
     return () => {
       if (unlisten) unlisten()
     }
+  }, [])
+
+  // Silent update check on startup (Tauri only).
+  useEffect(() => {
+    if (!isTauri()) return
+    void checkForUpdatesSilent()
   }, [])
 
   // Manual refresh from tray menu — bypasses cache.
@@ -219,22 +227,22 @@ export default function App() {
           <div className="settings-overlay" onClick={() => setAboutOpen(false)} />
           <div className="settings-panel" role="dialog">
             <div className="settings-head">
-              <strong>About Tokscale</strong>
+              <strong>About Tokcat</strong>
               <button className="settings-close" onClick={() => setAboutOpen(false)}>×</button>
             </div>
             <div style={{ fontSize: 13, lineHeight: 1.6, color: '#d1d5db' }}>
-              <div><strong>Tokscale 3D</strong> — version 0.1.1</div>
+              <div><strong>Tokcat</strong> — version 0.1.3</div>
               <div style={{ marginTop: 8 }}>
                 Native macOS menubar dashboard for the <code>tokscale</code> CLI.
               </div>
               <div style={{ marginTop: 8 }}>
                 <a
-                  href="https://github.com/handlecusion/tokscale-3d"
+                  href="https://github.com/handlecusion/tokcat"
                   target="_blank"
                   rel="noreferrer"
                   style={{ color: '#60a5fa' }}
                 >
-                  github.com/handlecusion/tokscale-3d
+                  github.com/handlecusion/tokcat
                 </a>
               </div>
             </div>

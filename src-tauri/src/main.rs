@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    tokscale_3d_lib::run()
+    tokcat_lib::run()
 }

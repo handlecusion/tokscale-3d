@@ -5,8 +5,8 @@ import math
 from pathlib import Path
 from PIL import Image, ImageFilter
 
-SOURCE = Path('/Users/ys/Code/tokscale-3d/scripts/cat-source.png')
-OUT_DIR = Path('/Users/ys/Code/tokscale-3d/src-tauri/icons/anim-cat')
+SOURCE = Path('/Users/ys/Code/tokcat/scripts/cat-source.png')
+OUT_DIR = Path('/Users/ys/Code/tokcat/src-tauri/icons/anim-cat')
 
 FRAME_COUNT = 15
 FRAME_SIZE = 44

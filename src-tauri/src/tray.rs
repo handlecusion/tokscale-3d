@@ -10,16 +10,27 @@ const POPOVER_W: f64 = 940.0;
 const POPOVER_H: f64 = 600.0;
 
 pub fn setup<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<()> {
-    let show = MenuItem::with_id(app, "show", "Open Tokscale", true, None::<&str>)?;
+    let show = MenuItem::with_id(app, "show", "Open Tokcat", true, None::<&str>)?;
     let settings = MenuItem::with_id(app, "settings", "Settings…", true, Some("Cmd+,"))?;
     let refresh = MenuItem::with_id(app, "refresh", "Refresh Now", true, Some("Cmd+R"))?;
     let sep1 = PredefinedMenuItem::separator(app)?;
-    let about = MenuItem::with_id(app, "about", "About Tokscale", true, None::<&str>)?;
+    let about = MenuItem::with_id(app, "about", "About Tokcat", true, None::<&str>)?;
+    let check_update =
+        MenuItem::with_id(app, "check-update", "Check for Updates…", true, None::<&str>)?;
     let sep2 = PredefinedMenuItem::separator(app)?;
-    let quit = MenuItem::with_id(app, "quit", "Quit Tokscale", true, Some("Cmd+Q"))?;
+    let quit = MenuItem::with_id(app, "quit", "Quit Tokcat", true, Some("Cmd+Q"))?;
     let menu = Menu::with_items(
         app,
-        &[&show, &settings, &refresh, &sep1, &about, &sep2, &quit],
+        &[
+            &show,
+            &settings,
+            &refresh,
+            &sep1,
+            &about,
+            &check_update,
+            &sep2,
+            &quit,
+        ],
     )?;
 
     TrayIconBuilder::with_id("main-tray")
@@ -45,6 +56,9 @@ pub fn setup<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<()> {
             "about" => {
                 show_popover(app);
                 let _ = app.emit("tray-action", "open-about");
+            }
+            "check-update" => {
+                let _ = app.emit("tray-action", "check-update");
             }
             _ => {}
         })

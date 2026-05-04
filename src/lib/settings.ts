@@ -23,7 +23,7 @@ export const ANIMATION_STYLE_LABELS: Record<AnimationStyle, string> = {
   cat: 'Spinning cat',
 }
 
-const KEY = 'tokscale3d:settings:v1'
+const KEY = 'tokcat:settings:v1'
 
 export function loadSettings(): Settings {
   try {
