@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="README.md">English</a> |
-  <a href="README.ko.md">한국어</a>
+  <a href="README.ko-KR.md">한국어</a>
 </p>
 
 <p align="center">
@@ -20,10 +20,12 @@
 
 <br>
 
+You spent **$2,513.67** on AI coding tools in the last four months. You don't know that, because you can't see it.
+
 Tokcat is a native macOS menubar app that turns the [`tokscale`](https://github.com/junhoyeo/tokscale) CLI into a live, glanceable dashboard. The cat icon sits in your menu bar showing today's tokens or cost; click it and a frosted glass popover opens with a 2D / 3D contribution graph of every Claude Code, Codex, Cursor, OpenCode, Gemini, and Copilot session you've ever run.
 
 <p align="center">
-  <img src="src-tauri/icons/icon.png" alt="Tokcat app icon" width="128" />
+  <img src="docs/screenshots/dashboard-3d.png" alt="Tokcat 3D contribution graph" width="640" />
 </p>
 
 ---
@@ -68,12 +70,39 @@ Tokcat is a thin Tauri wrapper around the `tokscale` CLI. On a 3-minute interval
 tokscale graph --no-spinner [--year YYYY]
 ```
 
-The JSON output is cached in memory and pushed to the React frontend, which renders it as:
+The JSON output is cached in memory and pushed to the React frontend, which renders it as a 2D heatmap or a 3D tile graph powered by react-three-fiber. Per-client filters, summary cards, and the menu bar title all update from the same payload.
 
-- a 2D contribution heatmap (GitHub-style), or
-- a 3D orthographic tile graph powered by react-three-fiber, with auto-fit framing on the active cluster so populated days stay readable instead of getting lost in the empty future.
+### 2D heatmap
 
-Per-client filters, summary cards (totals / daily average / streaks), and the menu bar title all update from the same payload.
+GitHub-style contribution grid. Click and hold for a date / cost / token tooltip.
+
+<p align="center">
+  <img src="docs/screenshots/dashboard-2d.png" alt="Tokcat 2D heatmap" width="640" />
+</p>
+
+### 3D tile graph
+
+Orthographic isometric projection with orbit controls and persistent camera state. The default framing auto-fits to the active tile cluster so populated days stay readable instead of getting lost in the empty future.
+
+<p align="center">
+  <img src="docs/screenshots/dashboard-3d.png" alt="Tokcat 3D tile graph" width="640" />
+</p>
+
+### Menubar settings
+
+A native System Settings-styled panel for the menu-bar title, animated tray icon, launch-at-login, and one-click update check.
+
+<p align="center">
+  <img src="docs/screenshots/settings.png" alt="Tokcat Settings panel" width="640" />
+</p>
+
+### Animated tray icon
+
+When animation is on, the menubar cat picks up speed as your token velocity rises — a quiet visual cue that you're shipping (or burning).
+
+<p align="center">
+  <img src="docs/screenshots/tray-anim.gif" alt="Spinning cat tray animation" width="96" />
+</p>
 
 ---
 

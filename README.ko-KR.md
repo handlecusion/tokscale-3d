@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="README.md">English</a> |
-  <a href="README.ko.md">한국어</a>
+  <a href="README.ko-KR.md">한국어</a>
 </p>
 
 <p align="center">
@@ -20,10 +20,12 @@
 
 <br>
 
+지난 4개월 동안 AI 코딩 도구에 **$2,513.67** 을 썼습니다. 그런데 모르고 있죠 — 볼 수 있는 곳이 없으니까.
+
 Tokcat은 [`tokscale`](https://github.com/junhoyeo/tokscale) CLI를 살아있는 메뉴바 대시보드로 바꿔주는 네이티브 macOS 앱입니다. 메뉴바의 고양이 아이콘이 오늘의 토큰 또는 비용을 보여주고, 클릭하면 macOS 비브런시(frosted glass) popover가 열려 Claude Code, Codex, Cursor, OpenCode, Gemini, Copilot 등 모든 세션의 사용 내역을 2D / 3D 컨트리뷰션 그래프로 보여줍니다.
 
 <p align="center">
-  <img src="src-tauri/icons/icon.png" alt="Tokcat 아이콘" width="128" />
+  <img src="docs/screenshots/dashboard-3d.png" alt="Tokcat 3D 컨트리뷰션 그래프" width="640" />
 </p>
 
 ---
@@ -68,12 +70,39 @@ Tokcat은 `tokscale` CLI를 감싸는 얇은 Tauri 래퍼입니다. 3분 간격(
 tokscale graph --no-spinner [--year YYYY]
 ```
 
-JSON 출력은 메모리 캐시에 저장된 후 React 프런트엔드로 전달되어:
+JSON 출력은 메모리 캐시에 저장된 후 React 프런트엔드로 전달되어 2D 히트맵 또는 3D 타일 그래프로 렌더링됩니다(react-three-fiber 기반). 클라이언트별 필터, 요약 카드(누적/일평균/스트릭), 메뉴바 타이틀 모두 동일한 페이로드에서 갱신됩니다.
 
-- 2D 컨트리뷰션 히트맵 (GitHub 스타일), 또는
-- react-three-fiber 기반의 3D 직교 타일 그래프(orbit 컨트롤, 카메라 영속화, **active 타일 자동 프레이밍**으로 빈 미래 영역에 묻히지 않게 표시)
+### 2D 히트맵
 
-으로 렌더링됩니다. 클라이언트별 필터, 요약 카드(누적/일평균/스트릭), 메뉴바 타이틀 모두 동일한 페이로드에서 갱신됩니다.
+GitHub 스타일 컨트리뷰션 그리드. 셀 위에 호버하면 날짜 / 비용 / 토큰 정보가 뜹니다.
+
+<p align="center">
+  <img src="docs/screenshots/dashboard-2d.png" alt="Tokcat 2D 히트맵" width="640" />
+</p>
+
+### 3D 타일 그래프
+
+직교 아이소메트릭 투영 + orbit 컨트롤 + 카메라 영속화. 기본 framing은 active 타일 클러스터에 자동 fit되므로 사용 중인 날들이 빈 미래에 묻히지 않고 또렷하게 보입니다.
+
+<p align="center">
+  <img src="docs/screenshots/dashboard-3d.png" alt="Tokcat 3D 타일 그래프" width="640" />
+</p>
+
+### Settings 패널
+
+macOS System Settings 스타일의 네이티브 패널 — 메뉴바 타이틀 / 트레이 애니메이션 / 로그인 시 자동 실행 / 원클릭 업데이트 확인.
+
+<p align="center">
+  <img src="docs/screenshots/settings.png" alt="Tokcat Settings 패널" width="640" />
+</p>
+
+### 트레이 애니메이션
+
+애니메이션이 켜져 있을 때 메뉴바 고양이는 토큰 처리 속도에 비례해 빠르게 회전합니다 — 작업 중이라는(혹은 토큰을 태우고 있다는) 조용한 시각적 신호.
+
+<p align="center">
+  <img src="docs/screenshots/tray-anim.gif" alt="회전하는 고양이 트레이 애니메이션" width="96" />
+</p>
 
 ---
 
