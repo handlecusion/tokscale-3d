@@ -14,8 +14,8 @@
       {
         "label": "main",
         "title": "Tokcat",
-        "width": 940,
-        "height": 520,
+        "width": 640,
+        "height": 527,
         "minWidth": 640,
         "minHeight": 420,
         "resizable": true,
