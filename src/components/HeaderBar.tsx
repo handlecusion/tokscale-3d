@@ -15,12 +15,12 @@ interface Props {
 
 export function HeaderBar({ totalTokens, year, years, onYearChange, theme, onThemeChange, view, onViewChange, onOpenSettings }: Props) {
   return (
-    <div className="header-bar">
-      <div className="header-brand">
-        <img className="brand-logo" src="/tokcat-logo.png" alt="" aria-hidden="true" />
-        <div className="header-title">
-          <span className="header-num">{humanizeTokens(totalTokens)}</span>
-          <span className="header-text"> tokens used in </span>
+    <div className="header-bar" data-tauri-drag-region>
+      <div className="header-brand" data-tauri-drag-region>
+        <img className="brand-logo" src="/tokcat-logo.png" alt="" aria-hidden="true" data-tauri-drag-region />
+        <div className="header-title" data-tauri-drag-region>
+          <span className="header-num" data-tauri-drag-region>{humanizeTokens(totalTokens)}</span>
+          <span className="header-text" data-tauri-drag-region> tokens used in </span>
           <select className="year-select" value={year} onChange={e => onYearChange(e.target.value)}>
             {years.map(y => (
               <option key={y} value={y}>{y}</option>
