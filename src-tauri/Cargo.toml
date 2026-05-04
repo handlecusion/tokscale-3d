@@ -1,6 +1,6 @@
 [package]
 name = "tokscale-3d"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 description = "Native macOS menubar dashboard for tokscale token usage"
 authors = ["handlecusion"]

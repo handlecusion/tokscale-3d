@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Settings, TrayMode, TRAY_MODE_LABELS } from '../lib/settings'
+import {
+  AnimationStyle,
+  ANIMATION_STYLE_LABELS,
+  Settings,
+  TrayMode,
+  TRAY_MODE_LABELS,
+} from '../lib/settings'
 import { isTauri } from '../lib/runtime'
 
 interface Props {
@@ -100,6 +106,35 @@ export function SettingsPanel({ open, onClose, settings, onChange }: Props) {
               />
               <span>Launch at login</span>
             </label>
+          </div>
+        )}
+
+        {tauri && (
+          <div className="settings-section">
+            <label className="settings-label">Menubar icon</label>
+            <label className="settings-toggle">
+              <input
+                type="checkbox"
+                checked={settings.animateTray}
+                onChange={e => onChange({ ...settings, animateTray: e.target.checked })}
+              />
+              <span>Animate based on token usage</span>
+            </label>
+            {settings.animateTray && (
+              <div className="settings-radio-list" style={{ marginTop: 8 }}>
+                {(['cube', 'cat'] as AnimationStyle[]).map(s => (
+                  <label key={s} className="settings-radio">
+                    <input
+                      type="radio"
+                      name="animation-style"
+                      checked={settings.animationStyle === s}
+                      onChange={() => onChange({ ...settings, animationStyle: s })}
+                    />
+                    <span>{ANIMATION_STYLE_LABELS[s]}</span>
+                  </label>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

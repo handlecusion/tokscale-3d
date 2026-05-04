@@ -142,6 +142,28 @@ export default function App() {
     })()
   }, [stats, settings.trayMode])
 
+  // Push animateTray flag to backend whenever it changes (Tauri only).
+  useEffect(() => {
+    if (!isTauri()) return
+    ;(async () => {
+      try {
+        const { invoke } = await import('@tauri-apps/api/core')
+        await invoke('set_animate_tray', { enabled: settings.animateTray })
+      } catch {}
+    })()
+  }, [settings.animateTray])
+
+  // Push animationStyle to backend whenever it changes (Tauri only).
+  useEffect(() => {
+    if (!isTauri()) return
+    ;(async () => {
+      try {
+        const { invoke } = await import('@tauri-apps/api/core')
+        await invoke('set_animation_style', { style: settings.animationStyle })
+      } catch {}
+    })()
+  }, [settings.animationStyle])
+
   return (
     <div className="page">
       <Panel>

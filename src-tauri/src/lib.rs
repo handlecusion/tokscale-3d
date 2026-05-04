@@ -1,3 +1,4 @@
+mod animation;
 mod state;
 mod tokscale;
 mod tray;
@@ -69,6 +70,20 @@ fn quit_app(app: tauri::AppHandle) {
     app.exit(0);
 }
 
+#[tauri::command]
+fn set_animate_tray(enabled: bool, state: tauri::State<'_, Arc<AppState>>) {
+    state.set_animate_enabled(enabled);
+}
+
+#[tauri::command]
+fn set_animation_style(style: String, state: tauri::State<'_, Arc<AppState>>) {
+    let code = match style.as_str() {
+        "cat" => 1u32,
+        _ => 0u32,
+    };
+    state.set_animation_style(code);
+}
+
 fn spawn_refresh_loop(app: tauri::AppHandle, state: Arc<AppState>) {
     async_runtime::spawn(async move {
         let mut tick = tokio::time::interval(Duration::from_secs(REFRESH_SECS));
@@ -113,6 +128,8 @@ pub fn run() {
             get_graph,
             refresh_graph,
             quit_app,
+            set_animate_tray,
+            set_animation_style,
             tray::update_tray_title
         ]);
 
@@ -125,6 +142,7 @@ pub fn run() {
         let handle = app.handle().clone();
         tray::setup(&handle)?;
         spawn_refresh_loop(handle.clone(), state_clone.clone());
+        animation::spawn_animation_loop(handle.clone(), state_clone.clone());
         Ok(())
     });
 

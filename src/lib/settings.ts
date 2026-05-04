@@ -2,15 +2,25 @@ import type { Stats } from './types'
 import { humanizeTokens, formatCost, isoDate } from './format'
 
 export type TrayMode = 'today_tokens' | 'today_cost' | 'total_tokens' | 'total_cost' | 'hidden'
+export type AnimationStyle = 'cube' | 'cat'
 
 export interface Settings {
   trayMode: TrayMode
   autostart: boolean
+  animateTray: boolean
+  animationStyle: AnimationStyle
 }
 
 export const DEFAULT_SETTINGS: Settings = {
   trayMode: 'today_tokens',
   autostart: false,
+  animateTray: true,
+  animationStyle: 'cat',
+}
+
+export const ANIMATION_STYLE_LABELS: Record<AnimationStyle, string> = {
+  cube: 'Wireframe cube',
+  cat: 'Spinning cat',
 }
 
 const KEY = 'tokscale3d:settings:v1'
