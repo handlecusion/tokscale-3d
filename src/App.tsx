@@ -230,7 +230,7 @@ export default function App() {
               <strong>About Tokcat</strong>
               <button className="settings-close" onClick={() => setAboutOpen(false)}>×</button>
             </div>
-            <div style={{ fontSize: 13, lineHeight: 1.6, color: '#d1d5db' }}>
+            <div style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--text-secondary)' }}>
               <div><strong>Tokcat</strong> — version 0.1.4</div>
               <div style={{ marginTop: 8 }}>
                 Native macOS menubar dashboard for the <code>tokscale</code> CLI.
@@ -240,7 +240,7 @@ export default function App() {
                   href="https://github.com/handlecusion/tokcat"
                   target="_blank"
                   rel="noreferrer"
-                  style={{ color: '#60a5fa' }}
+                  style={{ color: 'var(--blue)' }}
                 >
                   github.com/handlecusion/tokcat
                 </a>
