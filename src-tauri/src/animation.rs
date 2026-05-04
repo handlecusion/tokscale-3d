@@ -12,6 +12,7 @@ fn static_icon() -> tauri::image::Image<'static> {
 fn frame(style: u32, idx: usize) -> tauri::image::Image<'static> {
     match style {
         1 => anim_cat(idx),
+        2 => anim_cat2(idx),
         _ => anim(idx),
     }
 }
@@ -19,6 +20,7 @@ fn frame(style: u32, idx: usize) -> tauri::image::Image<'static> {
 fn frame_count(style: u32) -> usize {
     match style {
         1 => ANIM_CAT_LEN,
+        2 => ANIM_CAT2_LEN,
         _ => ANIM_LEN,
     }
 }

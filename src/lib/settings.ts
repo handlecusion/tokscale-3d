@@ -2,7 +2,7 @@ import type { Stats } from './types'
 import { humanizeTokens, formatCost, isoDate } from './format'
 
 export type TrayMode = 'today_tokens' | 'today_cost' | 'total_tokens' | 'total_cost' | 'hidden'
-export type AnimationStyle = 'cube' | 'cat'
+export type AnimationStyle = 'cube' | 'cat1' | 'cat2'
 
 export interface Settings {
   trayMode: TrayMode
@@ -15,12 +15,13 @@ export const DEFAULT_SETTINGS: Settings = {
   trayMode: 'today_tokens',
   autostart: false,
   animateTray: true,
-  animationStyle: 'cat',
+  animationStyle: 'cat2',
 }
 
 export const ANIMATION_STYLE_LABELS: Record<AnimationStyle, string> = {
   cube: 'Wireframe cube',
-  cat: 'Spinning cat',
+  cat1: 'Spinning cat (long loop)',
+  cat2: 'Spinning cat (short loop)',
 }
 
 const KEY = 'tokcat:settings:v1'
@@ -29,7 +30,10 @@ export function loadSettings(): Settings {
   try {
     const raw = localStorage.getItem(KEY)
     if (!raw) return DEFAULT_SETTINGS
-    return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) }
+    const parsed = JSON.parse(raw)
+    // Migrate legacy 'cat' to 'cat1' so existing users keep their long-loop cat.
+    if (parsed.animationStyle === 'cat') parsed.animationStyle = 'cat1'
+    return { ...DEFAULT_SETTINGS, ...parsed }
   } catch {
     return DEFAULT_SETTINGS
   }

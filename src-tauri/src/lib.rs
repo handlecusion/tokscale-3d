@@ -93,7 +93,8 @@ fn set_animate_tray(enabled: bool, state: tauri::State<'_, Arc<AppState>>) {
 #[tauri::command]
 fn set_animation_style(style: String, state: tauri::State<'_, Arc<AppState>>) {
     let code = match style.as_str() {
-        "cat" => 1u32,
+        "cat" | "cat1" => 1u32,
+        "cat2" => 2u32,
         _ => 0u32,
     };
     state.set_animation_style(code);
