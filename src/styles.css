@@ -679,6 +679,72 @@ html, body, #root {
   cursor: pointer;
   font-size: 13px;
   font-weight: 500;
+  font-family: inherit;
   transition: background 0.15s;
 }
 .settings-quit:hover { background: rgba(255, 59, 48, 0.18); }
+
+/* Onboarding dialog (tokscale missing / outdated) */
+.onboarding-panel {
+  width: min(420px, 92vw);
+}
+.onboarding-body {
+  padding: 18px 20px 14px;
+}
+.onboarding-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.onboarding-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin-bottom: 12px;
+}
+.onboarding-cmd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  border: 0.5px solid var(--card-border);
+  border-radius: 8px;
+  padding: 7px 10px;
+  margin-bottom: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  .onboarding-cmd {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+.onboarding-cmd code {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.onboarding-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+.onboarding-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 20px 16px;
+  border-top: 0.5px solid var(--panel-border);
+}
+.settings-button.primary {
+  background: var(--blue);
+  color: white;
+  border-color: transparent;
+}
+.settings-button.primary:hover:not(:disabled) {
+  filter: brightness(1.05);
+}

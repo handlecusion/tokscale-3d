@@ -8,6 +8,7 @@ import { StreaksCard } from './components/StreaksCard'
 import { ContributionGraph2D } from './components/ContributionGraph2D'
 import { ContributionGraph3D } from './components/ContributionGraph3D'
 import { SettingsPanel } from './components/SettingsPanel'
+import { TokscaleSetup } from './components/TokscaleSetup'
 import { useGraphStream } from './hooks/useGraphStream'
 import { computeStats } from './lib/stats'
 import { buildGrid } from './lib/grid'
@@ -32,6 +33,32 @@ export default function App() {
   const [knownClients, setKnownClients] = useState<Set<string>>(new Set())
   const [aboutOpen, setAboutOpen] = useState(false)
   const [refreshTick, setRefreshTick] = useState(0)
+  const [tokscaleSetup, setTokscaleSetup] = useState<{
+    state: 'missing' | 'outdated'
+    detected: string | null
+    minVersion: string
+  } | null>(null)
+
+  async function checkTokscale() {
+    if (!isTauri()) return
+    try {
+      const { invoke } = await import('@tauri-apps/api/core')
+      const info: any = await invoke('get_tokscale_info')
+      if (!info?.version) {
+        setTokscaleSetup({ state: 'missing', detected: null, minVersion: info?.min_version ?? '2.0.0' })
+      } else if (info.outdated) {
+        setTokscaleSetup({ state: 'outdated', detected: info.version, minVersion: info.min_version })
+      } else {
+        setTokscaleSetup(null)
+      }
+    } catch {
+      // Backend not reachable — leave dialog hidden.
+    }
+  }
+
+  useEffect(() => {
+    void checkTokscale()
+  }, [])
 
   useEffect(() => {
     saveSettings(settings)
@@ -228,6 +255,15 @@ export default function App() {
         settings={settings}
         onChange={setSettings}
       />
+      {tokscaleSetup && (
+        <TokscaleSetup
+          state={tokscaleSetup.state}
+          detected={tokscaleSetup.detected}
+          minVersion={tokscaleSetup.minVersion}
+          onDismiss={() => setTokscaleSetup(null)}
+          onRecheck={checkTokscale}
+        />
+      )}
       {aboutOpen && (
         <>
           <div className="settings-overlay" onClick={() => setAboutOpen(false)} />
