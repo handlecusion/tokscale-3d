@@ -58,7 +58,7 @@ The in-app updater checks for new releases on launch and again every 30 minutes;
 | **Quiet** | Lives in the menu bar — no Dock icon, no spurious notifications, auto-hides when you click another app. |
 | **Honest** | Numbers come from `tokscale` reading your local session logs. No telemetry, no cloud sync, no account required. |
 | **Multi-client** | Whatever `tokscale` supports, Tokcat shows: Claude Code, Codex, Cursor, OpenCode, Gemini, Copilot, Amp, Droid, and more. |
-| **Cat** | Optional spinning cat tray animation that picks up speed as your token velocity rises. |
+| **Cat** | The menubar cat eats your tokens and spins faster the more it digests — your token throughput as a single, glanceable critter. |
 
 ---
 
@@ -96,9 +96,11 @@ A native System Settings-styled panel for the menu-bar title, animated tray icon
   <img src="docs/screenshots/settings.png" alt="Tokcat Settings panel" width="640" />
 </p>
 
-### Animated tray icon
+### A cat that eats tokens and spins
 
-When animation is on, the menubar cat picks up speed as your token velocity rises — a quiet visual cue that you're shipping (or burning). Pick between three styles in Settings: a wireframe cube, the long-loop cat, or the short-loop cat.
+The mascot isn't decoration — it's the gauge. Tokcat's menubar cat eats whatever tokens your AI tools chew through and spins faster as it digests more. The hungrier your editor, the louder the cat. When you're idle, it dozes. When Claude Code is hammering through a refactor, it whirls. A glance at the menu bar and you know how fast your tokens are burning, without opening anything.
+
+Pick between three styles in Settings: a wireframe cube, the long-loop cat, or the short-loop cat.
 
 <p align="center">
   <img src="docs/screenshots/tray-anim-cat1.gif" alt="Long-loop spinning cat" width="128" />
