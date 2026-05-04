@@ -28,10 +28,10 @@ fn frame_count(style: u32) -> usize {
 fn level_to_fps(level: u8) -> u64 {
     match level {
         0 => 0,
-        1 => 3,
-        2 => 6,
-        3 => 10,
-        _ => 15,
+        1 => 4,
+        2 => 8,
+        3 => 15,
+        _ => 25,
     }
 }
 
