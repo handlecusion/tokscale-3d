@@ -25,6 +25,10 @@
 Tokcat은 [`tokscale`](https://github.com/junhoyeo/tokscale) CLI를 살아있는 메뉴바 대시보드로 바꿔주는 네이티브 macOS 앱입니다. 메뉴바의 고양이 아이콘이 오늘의 토큰 또는 비용을 보여주고, 클릭하면 macOS 비브런시(frosted glass) popover가 열려 Claude Code, Codex, Cursor, OpenCode, Gemini, Copilot 등 모든 세션의 사용 내역을 2D / 3D 컨트리뷰션 그래프로 보여줍니다.
 
 <p align="center">
+  <img src="docs/screenshots/menubar-cat2.gif" alt="메뉴바에서 오늘의 비용 옆에 회전하는 고양이" width="240" />
+</p>
+
+<p align="center">
   <img src="docs/screenshots/dashboard-3d.png" alt="Tokcat 3D 컨트리뷰션 그래프" width="640" />
 </p>
 

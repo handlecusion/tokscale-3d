@@ -25,6 +25,10 @@ You spent **$2,513.67** on AI coding tools in the last four months. You don't kn
 Tokcat is a native macOS menubar app that turns the [`tokscale`](https://github.com/junhoyeo/tokscale) CLI into a live, glanceable dashboard. The cat icon sits in your menu bar showing today's tokens or cost; click it and a frosted glass popover opens with a 2D / 3D contribution graph of every Claude Code, Codex, Cursor, OpenCode, Gemini, and Copilot session you've ever run.
 
 <p align="center">
+  <img src="docs/screenshots/menubar-cat2.gif" alt="Cat spinning next to today's cost in the menu bar" width="240" />
+</p>
+
+<p align="center">
   <img src="docs/screenshots/dashboard-3d.png" alt="Tokcat 3D contribution graph" width="640" />
 </p>
 
