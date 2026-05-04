@@ -1,3 +1,4 @@
+use std::ffi::OsString;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
@@ -27,6 +28,43 @@ fn locate() -> Option<PathBuf> {
     Some(PathBuf::from("tokscale"))
 }
 
+// macOS GUI apps launched via LaunchServices inherit a minimal PATH
+// (/usr/bin:/bin:/usr/sbin:/sbin) — neither Homebrew nor the user's shell
+// PATH is in scope. tokscale's #!/usr/bin/env node shebang then fails to
+// resolve `node` and exits 127. Augment PATH with the common locations
+// where node ends up so the spawned tokscale process can find its
+// interpreter.
+fn augmented_path() -> OsString {
+    let mut paths: Vec<String> = vec![
+        "/opt/homebrew/bin".to_string(),
+        "/opt/homebrew/sbin".to_string(),
+        "/usr/local/bin".to_string(),
+        "/usr/local/sbin".to_string(),
+    ];
+    if let Some(home) = std::env::var_os("HOME") {
+        let home = home.to_string_lossy();
+        paths.push(format!("{}/.cargo/bin", home));
+        paths.push(format!("{}/.local/bin", home));
+        paths.push(format!("{}/.volta/bin", home));
+        paths.push(format!("{}/.fnm", home));
+        paths.push(format!("{}/.nvm/versions/node", home));
+    }
+    if let Some(existing) = std::env::var_os("PATH") {
+        for p in existing.to_string_lossy().split(':') {
+            if !p.is_empty() && !paths.iter().any(|x| x == p) {
+                paths.push(p.to_string());
+            }
+        }
+    }
+    OsString::from(paths.join(":"))
+}
+
+fn command(bin: &Path) -> Command {
+    let mut cmd = Command::new(bin);
+    cmd.env("PATH", augmented_path());
+    cmd
+}
+
 fn parse_version(s: &str) -> Option<(u32, u32, u32)> {
     let token = s.trim().split_whitespace().last()?;
     let mut parts = token.split('.');
@@ -38,7 +76,7 @@ fn parse_version(s: &str) -> Option<(u32, u32, u32)> {
 
 pub fn version() -> Result<(u32, u32, u32), String> {
     let bin = locate().ok_or_else(|| NOT_FOUND_HINT.to_string())?;
-    let out = Command::new(&bin).arg("--version").output().map_err(|e| {
+    let out = command(&bin).arg("--version").output().map_err(|e| {
         if e.kind() == std::io::ErrorKind::NotFound {
             NOT_FOUND_HINT.to_string()
         } else {
@@ -56,7 +94,7 @@ pub fn run(year: &str) -> Result<serde_json::Value, String> {
         args.push("--year");
         args.push(year);
     }
-    let out = Command::new(&bin).args(&args).output().map_err(|e| {
+    let out = command(&bin).args(&args).output().map_err(|e| {
         if e.kind() == std::io::ErrorKind::NotFound {
             NOT_FOUND_HINT.to_string()
         } else {
