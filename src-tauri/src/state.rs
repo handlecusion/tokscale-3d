@@ -37,7 +37,7 @@ impl AppState {
             estimated_window_tokens: AtomicU64::new(0),
             samples_observed: AtomicU32::new(0),
             animate_enabled: AtomicBool::new(true),
-            animation_style: AtomicU32::new(1),
+            animation_style: AtomicU32::new(2),
             suppress_blur_hide: AtomicU32::new(0),
         })
     }
