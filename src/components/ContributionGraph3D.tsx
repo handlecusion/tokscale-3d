@@ -124,13 +124,32 @@ export function ContributionGraph3D({ grid }: Props) {
     cam.updateMatrixWorld(true)
     const w = wrap.clientWidth, h = wrap.clientHeight
     if (!w || !h) { ctrl.update(); persist(); return }
-    const halfX = totalWidth / 2
-    const halfZ = totalDepth / 2
+    // Frame the active tiles when any exist, so most days at a glance shows
+    // the populated cluster rather than the empty future. Fall back to the
+    // full grid AABB when there's nothing active yet.
     const corners: THREE.Vector3[] = []
-    for (const sx of [-halfX, halfX]) {
-      for (const sz of [-halfZ, halfZ]) {
-        for (const sy of [0, MAX_HEIGHT]) {
-          corners.push(new THREE.Vector3(sx, sy, sz))
+    const activeCells = cells.filter(
+      (item): item is NonNullable<typeof cells[number]> => !!item && item.isActive,
+    )
+    if (activeCells.length > 0) {
+      const halfCell = CELL / 2
+      for (const item of activeCells) {
+        for (const dx of [-halfCell, halfCell]) {
+          for (const dz of [-halfCell, halfCell]) {
+            for (const sy of [0, item.height]) {
+              corners.push(new THREE.Vector3(item.x + dx, sy, item.z + dz))
+            }
+          }
+        }
+      }
+    } else {
+      const halfX = totalWidth / 2
+      const halfZ = totalDepth / 2
+      for (const sx of [-halfX, halfX]) {
+        for (const sz of [-halfZ, halfZ]) {
+          for (const sy of [0, MAX_HEIGHT]) {
+            corners.push(new THREE.Vector3(sx, sy, sz))
+          }
         }
       }
     }
