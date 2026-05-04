@@ -36,7 +36,6 @@ pub fn setup<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<()> {
     TrayIconBuilder::with_id("main-tray")
         .icon(tauri::include_image!("icons/tray-icon.png"))
         .icon_as_template(true)
-        .title(" …")
         .menu(&menu)
         .show_menu_on_left_click(false)
         .on_menu_event(|app, event| match event.id.as_ref() {
@@ -153,12 +152,15 @@ pub fn refresh_tray_title<R: Runtime>(
 #[tauri::command]
 pub fn update_tray_title(app: AppHandle, title: String) -> Result<(), String> {
     if let Some(tray) = app.tray_by_id("main-tray") {
-        let title = if title.is_empty() {
-            None
+        // Always pass Some(String) — set_title(None) on macOS NSStatusItem
+        // can leave a residual title gap; an empty string fully collapses
+        // the status item to icon-only width.
+        let value: Option<String> = if title.is_empty() {
+            Some(String::new())
         } else {
             Some(format!(" {}", title))
         };
-        tray.set_title(title).map_err(|e| e.to_string())?;
+        tray.set_title(value).map_err(|e| e.to_string())?;
     }
     Ok(())
 }
