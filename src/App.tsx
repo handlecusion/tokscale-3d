@@ -55,10 +55,16 @@ export default function App() {
     }
   }, [])
 
-  // Silent update check on startup (Tauri only).
+  // Silent update check on startup, then every 30 min while the app runs.
+  // Without the recurring tick, releases published after launch are only
+  // surfaced on the next restart.
   useEffect(() => {
     if (!isTauri()) return
     void checkForUpdatesSilent()
+    const id = window.setInterval(() => {
+      void checkForUpdatesSilent()
+    }, 30 * 60 * 1000)
+    return () => window.clearInterval(id)
   }, [])
 
   // Manual refresh from tray menu — bypasses cache.
