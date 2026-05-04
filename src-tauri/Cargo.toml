@@ -1,6 +1,6 @@
 [package]
 name = "tokcat"
-version = "0.1.6"
+version = "0.1.7"
 edition = "2021"
 description = "Native macOS menubar dashboard for tokscale token usage"
 authors = ["handlecusion"]
