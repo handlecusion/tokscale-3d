@@ -150,6 +150,16 @@ pub fn run() {
         }
         let handle = app.handle().clone();
         tray::setup(&handle)?;
+        // Standard menubar popover behavior: hide when the window loses focus
+        // (e.g. user clicks another menubar app or anywhere outside Tokcat).
+        if let Some(window) = handle.get_webview_window("main") {
+            let w = window.clone();
+            window.on_window_event(move |event| {
+                if let tauri::WindowEvent::Focused(false) = event {
+                    let _ = w.hide();
+                }
+            });
+        }
         spawn_refresh_loop(handle.clone(), state_clone.clone());
         animation::spawn_animation_loop(handle.clone(), state_clone.clone());
         Ok(())
