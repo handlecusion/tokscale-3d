@@ -18,7 +18,7 @@ const MAX_HEIGHT = 4.0
 
 // Per-face shading: top is lighter than sides for a stylized 3D tile look.
 const COLOR_INACTIVE_TOP = new THREE.Color('#ffffff')
-const COLOR_INACTIVE_SIDE = new THREE.Color('#a8b0bd')
+const COLOR_INACTIVE_SIDE = new THREE.Color('#eaedf2')
 const COLOR_ACTIVE_LIGHT = new THREE.Color('#bfdbfe')
 const COLOR_ACTIVE_DARK = new THREE.Color('#1e3a8a')
 
