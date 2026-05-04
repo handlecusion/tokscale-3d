@@ -7,6 +7,7 @@ import {
   TRAY_MODE_LABELS,
 } from '../lib/settings'
 import { isTauri } from '../lib/runtime'
+import { checkForUpdatesInteractive } from '../lib/updater'
 
 interface Props {
   open: boolean
@@ -15,8 +16,41 @@ interface Props {
   onChange: (s: Settings) => void
 }
 
+function SwitchToggle({
+  checked,
+  disabled,
+  onChange,
+}: {
+  checked: boolean
+  disabled?: boolean
+  onChange: (next: boolean) => void
+}) {
+  return (
+    <label className={`settings-switch${disabled ? ' is-disabled' : ''}`}>
+      <input
+        type="checkbox"
+        checked={checked}
+        disabled={disabled}
+        onChange={e => onChange(e.target.checked)}
+      />
+      <span className="settings-switch-track" aria-hidden="true" />
+      <span className="settings-switch-thumb" aria-hidden="true" />
+    </label>
+  )
+}
+
+function CheckIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  )
+}
+
 export function SettingsPanel({ open, onClose, settings, onChange }: Props) {
   const [autostartBusy, setAutostartBusy] = useState(false)
+  const [version, setVersion] = useState<string>('')
+  const [updateBusy, setUpdateBusy] = useState(false)
   const tauri = isTauri()
 
   useEffect(() => {
@@ -30,6 +64,27 @@ export function SettingsPanel({ open, onClose, settings, onChange }: Props) {
           onChange({ ...settings, autostart: enabled })
         }
       } catch {}
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [open, tauri])
+
+  useEffect(() => {
+    if (!open) return
+    if (!tauri) {
+      setVersion('dev')
+      return
+    }
+    let cancelled = false
+    ;(async () => {
+      try {
+        const { getVersion } = await import('@tauri-apps/api/app')
+        const v = await getVersion()
+        if (!cancelled) setVersion(v)
+      } catch {
+        if (!cancelled) setVersion('')
+      }
     })()
     return () => {
       cancelled = true
@@ -54,6 +109,16 @@ export function SettingsPanel({ open, onClose, settings, onChange }: Props) {
     }
   }
 
+  async function checkUpdates() {
+    if (!tauri || updateBusy) return
+    setUpdateBusy(true)
+    try {
+      await checkForUpdatesInteractive()
+    } finally {
+      setUpdateBusy(false)
+    }
+  }
+
   async function quitApp() {
     if (!tauri) return
     try {
@@ -72,79 +137,110 @@ export function SettingsPanel({ open, onClose, settings, onChange }: Props) {
       <div className="settings-panel" role="dialog">
         <div className="settings-head">
           <strong>Settings</strong>
-          <button className="settings-close" onClick={onClose}>
+          <button className="settings-close" onClick={onClose} aria-label="Close">
             ×
           </button>
         </div>
 
-        <div className="settings-section">
-          <label className="settings-label">Menubar title</label>
-          <div className="settings-radio-list">
-            {modes.map(m => (
-              <label key={m} className="settings-radio">
-                <input
-                  type="radio"
-                  name="tray-mode"
-                  checked={settings.trayMode === m}
-                  onChange={() => onChange({ ...settings, trayMode: m })}
-                />
-                <span>{TRAY_MODE_LABELS[m]}</span>
-              </label>
-            ))}
-          </div>
-        </div>
+        <div className="settings-body">
+          <section className="settings-section">
+            <div className="settings-label">Menubar title</div>
+            <div className="settings-group">
+              {modes.map((m, i) => {
+                const active = settings.trayMode === m
+                return (
+                  <button
+                    key={m}
+                    type="button"
+                    className={`settings-row settings-row-radio${active ? ' is-active' : ''}`}
+                    onClick={() => onChange({ ...settings, trayMode: m })}
+                    aria-pressed={active}
+                  >
+                    <span className="settings-row-label">{TRAY_MODE_LABELS[m]}</span>
+                    <span className="settings-row-check">{active && <CheckIcon />}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </section>
 
-        {tauri && (
-          <div className="settings-section">
-            <label className="settings-label">Startup</label>
-            <label className="settings-toggle">
-              <input
-                type="checkbox"
-                checked={settings.autostart}
-                disabled={autostartBusy}
-                onChange={e => setAutostart(e.target.checked)}
-              />
-              <span>Launch at login</span>
-            </label>
-          </div>
-        )}
-
-        {tauri && (
-          <div className="settings-section">
-            <label className="settings-label">Menubar icon</label>
-            <label className="settings-toggle">
-              <input
-                type="checkbox"
-                checked={settings.animateTray}
-                onChange={e => onChange({ ...settings, animateTray: e.target.checked })}
-              />
-              <span>Animate based on token usage</span>
-            </label>
-            {settings.animateTray && (
-              <div className="settings-radio-list" style={{ marginTop: 8 }}>
-                {(['cube', 'cat'] as AnimationStyle[]).map(s => (
-                  <label key={s} className="settings-radio">
-                    <input
-                      type="radio"
-                      name="animation-style"
-                      checked={settings.animationStyle === s}
-                      onChange={() => onChange({ ...settings, animationStyle: s })}
-                    />
-                    <span>{ANIMATION_STYLE_LABELS[s]}</span>
-                  </label>
-                ))}
+          {tauri && (
+            <section className="settings-section">
+              <div className="settings-label">Startup</div>
+              <div className="settings-group">
+                <div className="settings-row">
+                  <span className="settings-row-label">Launch at login</span>
+                  <SwitchToggle
+                    checked={settings.autostart}
+                    disabled={autostartBusy}
+                    onChange={setAutostart}
+                  />
+                </div>
               </div>
-            )}
-          </div>
-        )}
+            </section>
+          )}
 
-        {tauri && (
-          <div className="settings-section">
-            <button className="settings-quit" onClick={quitApp}>
-              Quit Tokcat
-            </button>
-          </div>
-        )}
+          {tauri && (
+            <section className="settings-section">
+              <div className="settings-label">Menubar icon</div>
+              <div className="settings-group">
+                <div className="settings-row">
+                  <span className="settings-row-label">Animate based on token usage</span>
+                  <SwitchToggle
+                    checked={settings.animateTray}
+                    onChange={next => onChange({ ...settings, animateTray: next })}
+                  />
+                </div>
+                {settings.animateTray &&
+                  (['cube', 'cat'] as AnimationStyle[]).map(s => {
+                    const active = settings.animationStyle === s
+                    return (
+                      <button
+                        key={s}
+                        type="button"
+                        className={`settings-row settings-row-radio${active ? ' is-active' : ''}`}
+                        onClick={() => onChange({ ...settings, animationStyle: s })}
+                        aria-pressed={active}
+                      >
+                        <span className="settings-row-label">{ANIMATION_STYLE_LABELS[s]}</span>
+                        <span className="settings-row-check">{active && <CheckIcon />}</span>
+                      </button>
+                    )
+                  })}
+              </div>
+            </section>
+          )}
+
+          <section className="settings-section">
+            <div className="settings-label">About</div>
+            <div className="settings-group">
+              <div className="settings-row">
+                <span className="settings-row-label">Version</span>
+                <span className="settings-row-meta">{version || '—'}</span>
+              </div>
+              {tauri && (
+                <div className="settings-row">
+                  <span className="settings-row-label">Check for updates</span>
+                  <button
+                    className="settings-button"
+                    onClick={checkUpdates}
+                    disabled={updateBusy}
+                  >
+                    {updateBusy ? 'Checking…' : 'Check Now'}
+                  </button>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {tauri && (
+            <section className="settings-section">
+              <button className="settings-quit" onClick={quitApp}>
+                Quit Tokcat
+              </button>
+            </section>
+          )}
+        </div>
       </div>
     </>
   )
