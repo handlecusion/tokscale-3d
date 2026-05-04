@@ -98,10 +98,12 @@ macOS System Settings 스타일의 네이티브 패널 — 메뉴바 타이틀 /
 
 ### 트레이 애니메이션
 
-애니메이션이 켜져 있을 때 메뉴바 고양이는 토큰 처리 속도에 비례해 빠르게 회전합니다 — 작업 중이라는(혹은 토큰을 태우고 있다는) 조용한 시각적 신호.
+애니메이션이 켜져 있을 때 메뉴바 고양이는 토큰 처리 속도에 비례해 빠르게 회전합니다 — 작업 중이라는(혹은 토큰을 태우고 있다는) 조용한 시각적 신호. Settings에서 세 가지 스타일 선택 가능: 와이어프레임 큐브, 긴 사이클 고양이, 짧은 사이클 고양이.
 
 <p align="center">
-  <img src="docs/screenshots/tray-anim.gif" alt="회전하는 고양이 트레이 애니메이션" width="96" />
+  <img src="docs/screenshots/tray-anim-cat1.gif" alt="긴 사이클 고양이" width="128" />
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/tray-anim-cat2.gif" alt="짧은 사이클 고양이" width="128" />
 </p>
 
 ---

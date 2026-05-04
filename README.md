@@ -98,10 +98,12 @@ A native System Settings-styled panel for the menu-bar title, animated tray icon
 
 ### Animated tray icon
 
-When animation is on, the menubar cat picks up speed as your token velocity rises — a quiet visual cue that you're shipping (or burning).
+When animation is on, the menubar cat picks up speed as your token velocity rises — a quiet visual cue that you're shipping (or burning). Pick between three styles in Settings: a wireframe cube, the long-loop cat, or the short-loop cat.
 
 <p align="center">
-  <img src="docs/screenshots/tray-anim.gif" alt="Spinning cat tray animation" width="96" />
+  <img src="docs/screenshots/tray-anim-cat1.gif" alt="Long-loop spinning cat" width="128" />
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/tray-anim-cat2.gif" alt="Short-loop spinning cat" width="128" />
 </p>
 
 ---
