@@ -46,7 +46,7 @@ APP_TGZ="$BUNDLE_DIR/macos/Tokcat.app.tar.gz"
 APP_SIG="$BUNDLE_DIR/macos/Tokcat.app.tar.gz.sig"
 
 echo "==> Building release with updater artifacts"
-TAURI_SIGNING_PRIVATE_KEY_PATH="$KEY_PATH" \
+TAURI_SIGNING_PRIVATE_KEY="$(cat "$KEY_PATH")" \
   TAURI_SIGNING_PRIVATE_KEY_PASSWORD="${TAURI_SIGNING_PRIVATE_KEY_PASSWORD:-}" \
   pnpm tauri build
 
