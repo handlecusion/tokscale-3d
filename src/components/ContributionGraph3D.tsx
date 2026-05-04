@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Canvas, useThree } from '@react-three/fiber'
 import { OrthographicCamera, OrbitControls } from '@react-three/drei'
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
@@ -279,16 +280,18 @@ export function ContributionGraph3D({ grid }: Props) {
           )
         })}
       </Canvas>
-      {hover && (
-        <div
-          className="graph-tooltip"
-          style={{ left: hover.x + 12, top: hover.y + 12 }}
-        >
-          <div className="tt-date">{formatMonthDay(hover.date)}</div>
-          <div className="tt-line">{humanizeTokens(hover.tokens)} tokens</div>
-          <div className="tt-line">{formatCost(hover.cost)}</div>
-        </div>
-      )}
+      {hover &&
+        createPortal(
+          <div
+            className="graph-tooltip"
+            style={{ left: hover.x + 12, top: hover.y + 12 }}
+          >
+            <div className="tt-date">{formatMonthDay(hover.date)}</div>
+            <div className="tt-line">{humanizeTokens(hover.tokens)} tokens</div>
+            <div className="tt-line">{formatCost(hover.cost)}</div>
+          </div>,
+          document.body,
+        )}
       <div style={{
         position: 'absolute',
         top: 8,
