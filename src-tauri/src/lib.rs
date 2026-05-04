@@ -76,6 +76,16 @@ fn get_tokscale_info() -> tokscale::TokscaleInfo {
 }
 
 #[tauri::command]
+fn push_dialog_shield(state: tauri::State<'_, Arc<AppState>>) {
+    state.push_suppress_blur_hide();
+}
+
+#[tauri::command]
+fn pop_dialog_shield(state: tauri::State<'_, Arc<AppState>>) {
+    state.pop_suppress_blur_hide();
+}
+
+#[tauri::command]
 fn set_animate_tray(enabled: bool, state: tauri::State<'_, Arc<AppState>>) {
     state.set_animate_enabled(enabled);
 }
@@ -137,6 +147,8 @@ pub fn run() {
             refresh_graph,
             quit_app,
             get_tokscale_info,
+            push_dialog_shield,
+            pop_dialog_shield,
             set_animate_tray,
             set_animation_style,
             tray::update_tray_title
@@ -152,10 +164,16 @@ pub fn run() {
         tray::setup(&handle)?;
         // Standard menubar popover behavior: hide when the window loses focus
         // (e.g. user clicks another menubar app or anywhere outside Tokcat).
+        // Skipped while a system dialog is in flight so an ask/message popup
+        // stealing focus doesn't dismiss the window underneath it.
         if let Some(window) = handle.get_webview_window("main") {
             let w = window.clone();
+            let s = state_clone.clone();
             window.on_window_event(move |event| {
                 if let tauri::WindowEvent::Focused(false) = event {
+                    if s.should_suppress_blur_hide() {
+                        return;
+                    }
                     let _ = w.hide();
                 }
             });

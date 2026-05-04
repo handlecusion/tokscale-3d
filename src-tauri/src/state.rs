@@ -22,6 +22,10 @@ pub struct AppState {
     animate_enabled: AtomicBool,
     // 0 = cube, 1 = cat
     animation_style: AtomicU32,
+    // Bumped from JS while a system dialog (ask/message) is in flight so the
+    // blur-to-hide window handler doesn't dismiss the menubar window when the
+    // dialog steals focus.
+    suppress_blur_hide: AtomicU32,
 }
 
 impl AppState {
@@ -34,7 +38,23 @@ impl AppState {
             samples_observed: AtomicU32::new(0),
             animate_enabled: AtomicBool::new(true),
             animation_style: AtomicU32::new(1),
+            suppress_blur_hide: AtomicU32::new(0),
         })
+    }
+
+    pub fn push_suppress_blur_hide(&self) {
+        self.suppress_blur_hide.fetch_add(1, Ordering::SeqCst);
+    }
+
+    pub fn pop_suppress_blur_hide(&self) {
+        let prev = self.suppress_blur_hide.load(Ordering::SeqCst);
+        if prev > 0 {
+            self.suppress_blur_hide.fetch_sub(1, Ordering::SeqCst);
+        }
+    }
+
+    pub fn should_suppress_blur_hide(&self) -> bool {
+        self.suppress_blur_hide.load(Ordering::SeqCst) > 0
     }
 
     pub fn set_animation_style(&self, style: u32) {
